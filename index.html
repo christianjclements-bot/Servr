@@ -1577,6 +1577,7 @@
       document.body.style.overflow = '';
       document.getElementById('form-body').style.display = 'none';
       document.getElementById('form-success').style.display = 'block';
+      document.getElementById('form-success').scrollIntoView({ behavior: 'smooth', block: 'center' });
 
     } catch(err) {
       document.getElementById('stripe-card-errors').textContent = 'Payment failed — please try again.';
