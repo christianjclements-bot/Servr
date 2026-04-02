@@ -1339,40 +1339,52 @@
   // Stripe setup
   const STRIPE_PK = 'pk_test_51TFsGARc3ymskT36eZqSLmm6l4iEHXNnv5ave4eCSWgnQvV5eNdAJzAgqJeGTV3tGd4Z6Jc2AHYzf6y0oKWg0hKg00rXFT4zOA';
   const stripe = Stripe(STRIPE_PK);
-  const elements = stripe.elements({
-    appearance: {
-      theme: 'stripe',
-      variables: {
-        colorPrimary: '#185FA5',
-        colorBackground: '#ffffff',
-        colorText: '#0e0e0d',
-        colorDanger: '#c0392b',
-        fontFamily: 'DM Sans, sans-serif',
-        borderRadius: '2px',
-      }
-    }
-  });
-  const cardElement = elements.create('card', {
-    style: {
-      base: {
-        fontSize: '15px',
-        color: '#0e0e0d',
-        fontFamily: 'DM Sans, sans-serif',
-        '::placeholder': { color: '#999690' }
-      }
-    }
-  });
+  let cardElement = null;
+  let stripeElements = null;
 
-  // Mount card element when modal opens
-  let cardMounted = false;
-  function mountCard() {
-    if (!cardMounted) {
-      cardElement.mount('#stripe-card-element');
-      cardElement.on('change', (e) => {
-        document.getElementById('stripe-card-errors').textContent = e.error ? e.error.message : '';
-      });
-      cardMounted = true;
-    }
+  async function mountCard(amount, description) {
+    // Create payment intent first
+    const res = await fetch('/api/create-payment-intent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount, currency: 'aud', description })
+    });
+    const { clientSecret, error } = await res.json();
+    if (error) throw new Error(error);
+
+    // Create elements with clientSecret
+    stripeElements = stripe.elements({ clientSecret,
+      appearance: {
+        theme: 'stripe',
+        variables: {
+          colorPrimary: '#185FA5',
+          colorBackground: '#ffffff',
+          colorText: '#0e0e0d',
+          colorDanger: '#c0392b',
+          fontFamily: 'DM Sans, sans-serif',
+          borderRadius: '2px',
+        }
+      }
+    });
+
+    // Clear previous element
+    document.getElementById('stripe-card-element').innerHTML = '';
+    cardElement = stripeElements.create('card', {
+      style: {
+        base: {
+          fontSize: '15px',
+          color: '#0e0e0d',
+          fontFamily: 'DM Sans, sans-serif',
+          '::placeholder': { color: '#999690' }
+        }
+      }
+    });
+    cardElement.mount('#stripe-card-element');
+    cardElement.on('change', (e) => {
+      document.getElementById('stripe-card-errors').textContent = e.error ? e.error.message : '';
+    });
+
+    return clientSecret;
   }
   // Fade-up observer
   const observer = new IntersectionObserver((entries) => {
@@ -1443,6 +1455,7 @@
 
   let _productValue = 0;
   let _brand = '';
+  let _clientSecret = null;
 
   function selectTerm(btn) {
     document.querySelectorAll('.term-btn').forEach(b => b.classList.remove('active'));
@@ -1495,11 +1508,21 @@
         headers: { 'Accept': 'application/json' }
       });
     } catch(err) {}
-    btn.textContent = 'Activate my warranty →';
-    btn.disabled = false;
+
+    // Open modal first
     document.body.style.overflow = 'hidden';
     document.getElementById('payment-modal').classList.add('open');
-    mountCard();
+    btn.textContent = 'Activate my warranty →';
+    btn.disabled = false;
+
+    // Mount Stripe card with payment intent
+    const amount = Math.round(warrantyPrice * 100);
+    const planName = document.getElementById('modal-plan-name').textContent;
+    try {
+      _clientSecret = await mountCard(amount, planName);
+    } catch(err) {
+      document.getElementById('stripe-card-errors').textContent = 'Could not load payment — please try again.';
+    }
   }
 
   function closePayment() {
@@ -1532,50 +1555,30 @@
 
   async function handlePayment() {
     const btn = document.getElementById('pay-btn');
-    const priceText = document.getElementById('modal-plan-price').textContent;
-    const amount = Math.round(parseFloat(priceText.replace('$', '')) * 100); // cents
-
     btn.innerHTML = 'Processing...';
     btn.disabled = true;
 
     try {
-      // Create payment intent via Netlify function
-      const res = await fetch('/.netlify/functions/create-payment-intent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount,
-          currency: 'usd',
-          description: document.getElementById('modal-plan-name').textContent
-        })
-      });
+      if (!_clientSecret || !cardElement) throw new Error('Payment not ready');
 
-      const { clientSecret, error } = await res.json();
-      if (error) throw new Error(error);
-
-      // Confirm card payment with Stripe
       const name = document.getElementById('cardholder-name').value;
-      const { error: stripeError } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: cardElement,
-          billing_details: { name }
-        }
+      const { error: stripeError } = await stripe.confirmCardPayment(_clientSecret, {
+        payment_method: { card: cardElement, billing_details: { name } }
       });
 
       if (stripeError) {
         document.getElementById('stripe-card-errors').textContent = stripeError.message;
-        btn.innerHTML = '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg><span id="pay-btn-text">' + priceText + ' · Try again</span>';
+        btn.innerHTML = '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg><span id="pay-btn-text">Try again</span>';
         btn.disabled = false;
         return;
       }
 
-      // Success
       document.getElementById('payment-modal').classList.remove('open');
       document.body.style.overflow = '';
       document.getElementById('form-body').style.display = 'none';
       document.getElementById('form-success').style.display = 'block';
 
-    } catch (err) {
+    } catch(err) {
       document.getElementById('stripe-card-errors').textContent = 'Payment failed — please try again.';
       btn.innerHTML = '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg><span id="pay-btn-text">Try again</span>';
       btn.disabled = false;
