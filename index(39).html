@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Servr — Activate Your Warranty</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f2eb;
+    --surface: #edeae2;
+    --surface2: #e6e2d9;
+    --border: #ddd9cf;
+    --border2: #ccc8be;
+    --accent: #185FA5;
+    --accent-glow: rgba(24,95,165,0.1);
+    --accent-light: #1470c0;
+    --text: #0e0e0d;
+    --muted: #6b6860;
+    --muted2: #999690;
+    --green: #1D9E75;
+    --green-bg: rgba(29,158,117,0.08);
+    --serif: 'Instrument Serif', Georgia, serif;
+    --sans: 'DM Sans', sans-serif;
+    --radius: 4px;
+  }
+
+  html { scroll-behavior: smooth; overflow-x: hidden; scroll-padding-top: 70px; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  img, svg, canvas { max-width: 100%; height: auto; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.1rem 2.5rem;
+    background: rgba(245,242,235,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--text);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .logo span { color: var(--accent); font-style: italic; }
+
+  .nav-right {
+    display: flex; align-items: center; gap: 1.5rem;
+  }
+
+  .nav-link {
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-link:hover { color: var(--text); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 7rem 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(55,138,221,0.08) 0%, transparent 70%);
+  }
+
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 0%, transparent 80%);
+    opacity: 0.5;
+  }
+
+  .hero-content { position: relative; z-index: 1; max-width: 700px; }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(29,158,117,0.08);
+    border: 1px solid rgba(29,158,117,0.2);
+    color: #0f6e56;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.9rem;
+    border-radius: 100px;
+    margin-bottom: 2rem;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin-bottom: 1.25rem;
+    color: var(--text);
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--muted);
+    font-weight: 400;
+    max-width: 520px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.7;
+  }
+
+  .hero-cta {
+    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    padding: 0.85rem 2rem;
+    border: none;
+    border-radius: var(--radius);
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-block;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:hover { background: var(--accent-light); transform: translateY(-1px); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    padding: 0.85rem 2rem;
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    font-size: 0.95rem;
+    font-weight: 400;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-block;
+  }
+  .btn-ghost:hover { border-color: var(--muted); color: var(--text); }
+
+  /* TRUST STRIP */
+  .trust {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+    background: var(--surface);
+  }
+
+  .trust-item {
+    display: flex; align-items: center; gap: 0.6rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .trust-icon {
+    width: 18px; height: 18px;
+    color: var(--green);
+    flex-shrink: 0;
+  }
+
+  /* HOW IT WORKS */
+  .how {
+    padding: 6rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  .section-sub {
+    color: var(--muted);
+    font-size: 1rem;
+    max-width: 480px;
+    line-height: 1.7;
+    margin-bottom: 3.5rem;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .step {
+    background: var(--bg);
+    padding: 2rem 1.5rem;
+    transition: background 0.2s;
+  }
+  .step:hover { background: var(--surface); }
+
+  .step-num {
+    font-family: var(--serif);
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--accent);
+    opacity: 0.4;
+    line-height: 1;
+    margin-bottom: 1.25rem;
+  }
+
+  .step h3 {
+    font-family: var(--serif);
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .step p {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* COVERAGE */
+  .coverage {
+    padding: 6rem 2rem;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .coverage-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  .coverage-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-top: 2rem;
+  }
+
+  .coverage-item {
+    background: var(--bg);
+    padding: 1.1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: var(--text);
+    transition: background 0.15s;
+  }
+  .coverage-item:hover { background: var(--surface); }
+
+  .coverage-item .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    flex-shrink: 0;
+  }
+
+  .coverage-item.excluded .dot { background: var(--border2); }
+  .coverage-item.excluded { color: var(--muted); }
+
+  .coverage-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    margin-top: 2rem;
+  }
+
+  .coverage-card-header {
+    font-family: var(--serif);
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .coverage-card-sub {
+    font-size: 0.875rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .coverage-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .stat-label { color: var(--muted); }
+  .stat-value { font-weight: 600; color: var(--text); }
+  .stat-value.green { color: var(--green); }
+
+  /* REGISTER FORM */
+  .register {
+    padding: 7rem 2rem 4rem;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .form-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .form-header {
+    background: var(--accent);
+    padding: 2rem 2.5rem;
+  }
+
+  .form-header h2 {
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.35rem;
+  }
+
+  .form-header p {
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .form-body { padding: 2.5rem; }
+
+  .form-step-indicator {
+    display: flex;
+    gap: 0.4rem;
+    margin-bottom: 2rem;
+  }
+
+  .form-step-dot {
+    height: 3px;
+    flex: 1;
+    border-radius: 2px;
+    background: var(--border2);
+    transition: background 0.3s;
+  }
+  .form-step-dot.active { background: var(--accent); }
+
+  .form-group {
+    margin-bottom: 1.25rem;
+    position: relative;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 0.8rem 1rem;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  .form-group input::placeholder { color: var(--muted2); }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .form-submit {
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.95rem;
+    font-family: var(--sans);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: background 0.2s, transform 0.15s;
+    letter-spacing: 0.01em;
+  }
+  .form-submit:hover { background: var(--accent-light); transform: translateY(-1px); }
+
+  .form-legal {
+    font-size: 0.75rem;
+    color: var(--muted2);
+    margin-top: 1rem;
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  /* SUCCESS STATE */
+  .form-success {
+    display: none;
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+
+  .success-check {
+    width: 64px; height: 64px;
+    background: var(--green-bg);
+    border: 1px solid rgba(29,158,117,0.2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 1.8rem;
+    color: var(--green);
+  }
+
+  .form-success h3 {
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
+  }
+
+  .form-success p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* FAQ */
+  .faq {
+    padding: 6rem 2rem;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .faq-list { margin-top: 3rem; }
+
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .faq-question {
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 0.975rem;
+    font-weight: 400;
+    text-align: left;
+    padding: 1.25rem 0;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .faq-arrow {
+    color: var(--accent);
+    font-size: 1.2rem;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+
+  .faq-item.open .faq-arrow { transform: rotate(45deg); }
+
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .faq-item.open .faq-answer { max-height: 300px; }
+  .faq-answer-inner { padding-bottom: 1.25rem; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background: var(--bg);
+  }
+
+  footer p {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  footer a {
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  footer a:hover { color: var(--text); }
+
+  /* ANIMATIONS */
+  /* PAYMENT MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(14,14,13,0.6);
+    backdrop-filter: blur(4px);
+    align-items: flex-start;
+    justify-content: center;
+    padding: 1rem;
+    overflow-y: auto;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    width: 100%;
+    max-width: 480px;
+    overflow: hidden;
+    margin: auto;
+    flex-shrink: 0;
+  }
+
+  .modal-header {
+    background: var(--accent);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal-header h3 {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: #fff;
+  }
+
+  .modal-header p { font-size: 0.8rem; color: rgba(255,255,255,0.7); margin-top: 0.2rem; }
+
+  .modal-close {
+    background: none; border: none; color: rgba(255,255,255,0.8);
+    font-size: 1.4rem; cursor: pointer; line-height: 1; padding: 0;
+  }
+  .modal-close:hover { color: #fff; }
+
+  .modal-body { padding: 1.5rem; }
+
+  .plan-summary {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .plan-summary-label { font-size: 0.875rem; color: var(--muted); }
+  .plan-summary-name { font-size: 0.95rem; font-weight: 500; color: var(--text); margin-top: 0.1rem; }
+  .plan-summary-price { font-family: var(--serif); font-size: 1.6rem; font-weight: 400; color: var(--accent); }
+  .plan-summary-period { font-size: 0.75rem; color: var(--muted); text-align: right; }
+
+  .card-field-label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+
+  .card-input-wrap {
+    position: relative;
+  }
+
+  .card-input {
+    width: 100%;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 0.8rem 1rem;
+    padding-right: 3rem;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .card-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  .card-input::placeholder { color: var(--muted2); letter-spacing: 0.02em; }
+
+  .card-icon {
+    position: absolute;
+    right: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted2);
+    font-size: 1rem;
+  }
+
+  .scan-btn {
+    width: 100%;
+    background: var(--surface);
+    border: 1.5px dashed #c8440a;
+    border-radius: 4px;
+    padding: 0.9rem;
+    color: #c8440a;
+    font-family: var(--sans);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    transition: all 0.2s;
+    margin-bottom: 1.25rem;
+  }
+  .scan-btn:hover { background: rgba(200,68,10,0.06); }
+
+  .scan-btn svg { width: 18px; height: 18px; }
+
+  .card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+
+  .pay-btn {
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 0.95rem;
+    font-family: var(--sans);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 0.75rem;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  .pay-btn:hover { background: var(--accent-light); }
+  .pay-btn svg { width: 16px; height: 16px; }
+
+  .express-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.65rem 0.5rem;
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .express-btn:hover { border-color: var(--accent); background: var(--accent-glow); }
+  .express-btn.active { border-color: var(--accent); background: var(--accent-glow); box-shadow: 0 0 0 2px var(--accent-glow); }
+  .express-btn-sm { font-size: 0.75rem; padding: 0.55rem 0.4rem; }
+
+  .term-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.6rem 0.5rem;
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    text-align: center;
+    line-height: 1.5;
+    transition: all 0.15s;
+  }
+  .term-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .term-btn.active { border-color: var(--accent); background: var(--accent-glow); color: var(--accent); font-weight: 600; }
+  .term-pct { font-size: 0.7rem; opacity: 0.75; }
+
+  .modal-legal {
+    font-size: 0.72rem;
+    color: var(--muted2);
+    text-align: center;
+    margin-top: 0.75rem;
+    line-height: 1.5;
+  }
+
+  /* Camera scanner overlay */
+  .scanner-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 300;
+    background: #000;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .scanner-overlay.open { display: flex; }
+
+  .scanner-frame {
+    width: 280px; height: 180px;
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    position: relative;
+    margin-bottom: 1.5rem;
+    background: rgba(200,68,10,0.04);
+  }
+
+  .scanner-corner {
+    position: absolute;
+    width: 20px; height: 20px;
+    border-color: var(--accent);
+    border-style: solid;
+  }
+  .scanner-corner.tl { top: -2px; left: -2px; border-width: 3px 0 0 3px; border-radius: 4px 0 0 0; }
+  .scanner-corner.tr { top: -2px; right: -2px; border-width: 3px 3px 0 0; border-radius: 0 4px 0 0; }
+  .scanner-corner.bl { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; border-radius: 0 0 0 4px; }
+  .scanner-corner.br { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; border-radius: 0 0 4px 0; }
+
+  .scanner-line {
+    position: absolute;
+    left: 0; right: 0; height: 2px;
+    background: var(--accent);
+    opacity: 0.7;
+    animation: scan 2s linear infinite;
+  }
+  @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+
+  .scanner-text { color: rgba(255,255,255,0.7); font-size: 0.875rem; margin-bottom: 1.5rem; }
+  .scanner-close {
+    background: none; border: 1px solid rgba(255,255,255,0.3);
+    color: #fff; padding: 0.6rem 1.5rem; border-radius: 4px;
+    font-family: var(--sans); font-size: 0.875rem; cursor: pointer;
+  }
+
+  /* no fade animation */
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .coverage-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .form-row { grid-template-columns: 1fr; }
+    .trust { gap: 1.5rem; }
+  }
+
+  @media (max-width: 600px) {
+    nav { padding: 0.9rem 1rem; }
+    .hero { padding: 6rem 1.25rem 3rem; }
+    .steps { grid-template-columns: 1fr; }
+    .how, .faq { padding: 4rem 1.25rem; }
+    .coverage { padding: 4rem 1.25rem; }
+    .register { padding: 4rem 1.25rem; }
+    .form-body { padding: 1.5rem; }
+    .form-header { padding: 1.5rem; }
+    footer { flex-direction: column; text-align: center; padding: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">serv<span>r</span></a>
+  <div class="nav-right">
+    <a href="#coverage" class="nav-link">Coverage</a>
+    <a href="#faq" class="nav-link">FAQ</a>
+    <a href="#register" class="btn-primary" style="padding:0.5rem 1.2rem;font-size:0.85rem;">Activate warranty</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Servr Global Warranty</div>
+    <h1>Your product.<br><em>Protected everywhere.</em></h1>
+    <p class="hero-sub">Activate your Servr warranty in 2 minutes. Local repair, fast claims, and real support — in every market your product was sold.</p>
+    <div class="hero-cta">
+      <a href="#register" class="btn-primary">Activate your warranty →</a>
+      <a href="#how" class="btn-ghost">See how it works</a>
+    </div>
+  </div>
+</section>
+
+<!-- REGISTER FORM -->
+<section class="register" id="register">
+  <div style="text-align:center;margin-bottom:2.5rem;">
+    <p class="section-label">Activate warranty</p>
+    <h2 class="section-title">Register your product</h2>
+    <p style="color:var(--muted);font-size:0.95rem;">Have your receipt or order number ready. Activation takes under 2 minutes.</p>
+  </div>
+  <div class="form-card">
+    <div class="form-header">
+      <h2>Product registration</h2>
+      <p>All fields required to activate your warranty</p>
+    </div>
+    <div class="form-body" id="form-body">
+      <div class="form-step-indicator">
+        <div class="form-step-dot active"></div>
+        <div class="form-step-dot active"></div>
+        <div class="form-step-dot active"></div>
+      </div>
+      <form id="register-form" action="https://formspree.io/f/xbdpyvlz" method="POST" onsubmit="handleRegister(event)">
+        <input type="hidden" name="form_type" value="warranty_registration">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Product value</label>
+            <div class="card-input-wrap">
+              <span style="position:absolute;left:0.9rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.95rem;pointer-events:none;">$</span>
+              <input type="text" name="product_value" placeholder="499" required inputmode="decimal" style="padding-left:1.8rem;" oninput="this.value=this.value.replace(/[^0-9.]/g,'').replace(/(\..*)\./g,'$1')">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Warranty type</label>
+            <select name="warranty_type" required>
+              <option value="" disabled selected>Select term</option>
+              <option value="12">12 months</option>
+              <option value="24">24 months</option>
+              <option value="36">36 months</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>First name</label>
+            <input type="text" name="first_name" placeholder="Jane" required>
+          </div>
+          <div class="form-group">
+            <label>Last name</label>
+            <input type="text" name="last_name" placeholder="Smith" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email address</label>
+          <input type="email" name="email" placeholder="jane@example.com" required>
+        </div>
+        <div class="form-group">
+          <label>Phone number</label>
+          <input type="tel" name="phone" placeholder="+1 555 000 0000">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Brand / manufacturer</label>
+            <input type="text" name="brand" placeholder="e.g. Midea, Hisense" required>
+          </div>
+          <div class="form-group">
+            <label>Product category</label>
+            <select name="category" required>
+              <option value="" disabled selected>Select category</option>
+              <option>Air conditioner</option>
+              <option>Washing machine</option>
+              <option>Refrigerator</option>
+              <option>Television</option>
+              <option>Dishwasher</option>
+              <option>Other appliance</option>
+              <option>Consumer electronics</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Model number</label>
+          <input type="text" name="model" placeholder="e.g. MWH-18000-EW" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Date of purchase</label>
+            <input type="date" name="purchase_date" id="purchase_date" required onclick="this.showPicker && this.showPicker()" style="cursor:pointer;">
+          </div>
+          <div class="form-group">
+            <label>Order / receipt number</label>
+            <input type="text" name="order_number" placeholder="e.g. ORD-123456" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Country of purchase</label>
+          <select name="country" required>
+            <option value="China" selected>China</option>
+            <option>United States</option>
+            <option>United Kingdom</option>
+            <option>Australia</option>
+            <option>Canada</option>
+            <option>Germany</option>
+            <option>France</option>
+            <option>Japan</option>
+            <option>India</option>
+            <option>Brazil</option>
+            <option>UAE</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <button type="submit" class="form-submit">Activate my warranty →</button>
+        <p class="form-legal">By registering you agree to the Servr Terms of Service and Privacy Policy. Your warranty is activated immediately upon successful registration.</p>
+      </form>
+    </div>
+    <div class="form-success" id="form-success">
+      <div class="success-check">✓</div>
+      <h3>Warranty activated</h3>
+      <p>You'll receive a confirmation email within minutes with your warranty certificate and claim instructions. Keep it somewhere safe.</p>
+      <button onclick="resetForm()" class="btn-primary" style="margin-top:1.5rem;display:inline-flex;align-items:center;gap:0.5rem;border:none;cursor:pointer;">
+        + Activate another warranty
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST STRIP -->
+<div class="trust">
+  <div class="trust-item">
+    <svg class="trust-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+    Local technicians in 40+ countries
+  </div>
+  <div class="trust-item">
+    <svg class="trust-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    Claims resolved within 5 business days
+  </div>
+  <div class="trust-item">
+    <svg class="trust-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+    24/7 claim support via app
+  </div>
+  <div class="trust-item">
+    <svg class="trust-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+    Repair or replace guarantee
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="fade-up">
+    <p class="section-label">How it works</p>
+    <h2 class="section-title">Up and running<br>in minutes</h2>
+    <p class="section-sub">Activating your warranty takes less than two minutes. After that, everything is handled through the Servr app.</p>
+  </div>
+  <div class="steps">
+    <div class="step fade-up">
+      <div class="step-num">01</div>
+      <h3>Scan or visit</h3>
+      <p>Scan the QR code on your product or packaging, or visit servr.com/activate directly.</p>
+    </div>
+    <div class="step fade-up">
+      <div class="step-num">02</div>
+      <h3>Register your product</h3>
+      <p>Enter your product details and proof of purchase. Takes under two minutes.</p>
+    </div>
+    <div class="step fade-up">
+      <div class="step-num">03</div>
+      <h3>File a claim anytime</h3>
+      <p>Something breaks? File a claim through the Servr app. We triage it within 24 hours.</p>
+    </div>
+    <div class="step fade-up">
+      <div class="step-num">04</div>
+      <h3>We fix it locally</h3>
+      <p>A credentialed local technician comes to you — or we arrange a replacement.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COVERAGE -->
+<section class="coverage" id="coverage">
+  <div class="coverage-inner">
+    <div class="fade-up">
+      <p class="section-label">What's covered</p>
+      <h2 class="section-title">Comprehensive cover. Real support.</h2>
+      <p class="section-sub" style="margin-bottom:0;">Your Servr plan covers the failures that actually happen — not just the ones manufacturers admit to.</p>
+      <div class="coverage-list">
+        <div class="coverage-item"><span class="dot"></span>Mechanical and electrical failure</div>
+        <div class="coverage-item"><span class="dot"></span>Parts and labour included</div>
+        <div class="coverage-item"><span class="dot"></span>In-home technician dispatch</div>
+        <div class="coverage-item"><span class="dot"></span>Replacement if beyond repair</div>
+        <div class="coverage-item"><span class="dot"></span>Returns and logistics handled</div>
+        <div class="coverage-item"><span class="dot"></span>All covered brands and models</div>
+        <div class="coverage-item excluded"><span class="dot"></span>Accidental damage (not covered)</div>
+        <div class="coverage-item excluded"><span class="dot"></span>Cosmetic damage (not covered)</div>
+        <div class="coverage-item excluded"><span class="dot"></span>Pre-existing conditions (not covered)</div>
+      </div>
+    </div>
+    <div class="fade-up">
+      <p class="section-label">Your plan</p>
+      <h2 class="section-title">What you get</h2>
+      <p class="section-sub" style="margin-bottom:0;">Standard Servr Global Warranty — included with your purchase.</p>
+      <div class="coverage-card">
+        <div class="coverage-card-header">Servr Global Warranty</div>
+        <div class="coverage-card-sub">Extended protection backed by a local service network in 40+ countries.</div>
+        <div class="coverage-stat">
+          <div class="stat-row">
+            <span class="stat-label">Coverage period</span>
+            <span class="stat-value">2 years from purchase</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Claim response</span>
+            <span class="stat-value green">Within 24 hours</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Service delivery</span>
+            <span class="stat-value">In-home or depot</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Countries covered</span>
+            <span class="stat-value">40+</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Claims limit</span>
+            <span class="stat-value">Up to product value</span>
+          </div>
+        </div>
+        <a href="#register" class="btn-primary" style="display:block;text-align:center;text-decoration:none;">Activate now →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="fade-up" style="text-align:center;margin-bottom:0;">
+    <p class="section-label">Common questions</p>
+    <h2 class="section-title">Everything you need to know</h2>
+  </div>
+  <div class="faq-list fade-up">
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        How do I file a claim?
+        <span class="faq-arrow">+</span>
+      </button>
+      <div class="faq-answer"><div class="faq-answer-inner">Download the Servr app, log in with the email you registered with, and tap "File a claim." You'll be asked to describe the issue and upload a short video or photo. We'll respond within 24 hours with next steps.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        How long does my warranty last?
+        <span class="faq-arrow">+</span>
+      </button>
+      <div class="faq-answer"><div class="faq-answer-inner">Your Servr warranty covers you for 2 years from your original date of purchase. The coverage period starts the day you bought the product, not the day you registered.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        What if a technician isn't available in my area?
+        <span class="faq-arrow">+</span>
+      </button>
+      <div class="faq-answer"><div class="faq-answer-inner">We cover 40+ countries and are expanding continuously. If a local technician isn't available in your specific area, we'll arrange depot repair (we cover shipping both ways) or a full replacement at no extra cost to you.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Is accidental damage covered?
+        <span class="faq-arrow">+</span>
+      </button>
+      <div class="faq-answer"><div class="faq-answer-inner">Standard Servr plans cover mechanical and electrical failure — not accidental damage. If you dropped it, spilled on it, or it was physically damaged, that falls outside standard coverage. Check your plan documents for full exclusions.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Can I transfer my warranty to a new owner?
+        <span class="faq-arrow">+</span>
+      </button>
+      <div class="faq-answer"><div class="faq-answer-inner">Yes. Servr warranties are transferable. Contact us at <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="60131510100f12142013051216124e030f0d">[email&#160;protected]</a> with the new owner's details and your original registration number and we'll update the record.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        How quickly will my product be repaired?
+        <span class="faq-arrow">+</span>
+      </button>
+      <div class="faq-answer"><div class="faq-answer-inner">We aim to have an approved claim resolved within 5 business days. Complex repairs or parts availability may extend this, but we'll keep you updated at every step through the app.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a href="#" class="logo" style="font-size:1.1rem;">serv<span style="color:var(--accent);">r</span></a>
+  <p>© 2025 Servr. Global Warranty Protection Services.</p>
+  <div style="display:flex;gap:1.5rem;">
+    <a href="#">Terms</a>
+    <a href="#">Privacy</a>
+    <a href="/cdn-cgi/l/email-protection#d2a1a7a2a2bda0a692a1b7a0a4a0fcb1bdbf">Support</a>
+  </div>
+</footer>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="payment-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h3>Complete your warranty</h3>
+        <p>Secure payment · SSL encrypted</p>
+      </div>
+      <button class="modal-close" onclick="closePayment()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="plan-summary">
+        <div>
+          <div class="plan-summary-label">Servr Global Warranty</div>
+          <div class="plan-summary-name" id="modal-plan-name">—</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="plan-summary-price" id="modal-plan-price">—</div>
+          <div class="plan-summary-period">one-time · <span id="modal-plan-value"></span></div>
+        </div>
+      </div>
+
+      <!-- Term selector -->
+      <div style="margin-bottom:1.25rem;">
+        <div style="font-size:0.78rem;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem;">Change coverage duration</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;">
+          <button class="term-btn" data-term="12" onclick="selectTerm(this)">12 months</button>
+          <button class="term-btn" data-term="24" onclick="selectTerm(this)">24 months</button>
+          <button class="term-btn" data-term="36" onclick="selectTerm(this)">36 months</button>
+        </div>
+      </div>
+
+      <!-- Payment method tabs -->
+      <div style="font-size:0.78rem;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem;">Payment method</div>
+
+      <!-- Express payment row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;margin-bottom:0.75rem;">
+        <button class="express-btn" onclick="selectPayment('apple')">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98l-.09.06c-.22.15-2.18 1.27-2.16 3.8.03 3.02 2.65 4.03 2.68 4.04l-.07.28zM13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          Apple Pay
+        </button>
+        <button class="express-btn" onclick="selectPayment('google')">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          Google Pay
+        </button>
+        <button class="express-btn" onclick="selectPayment('alipay')">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="#1677FF"><path d="M21.422 15.358C19.522 14.432 12 10.9 12 10.9V4a2 2 0 00-2-2H4a2 2 0 00-2 2v16a2 2 0 002 2h16a2 2 0 002-2v-2.9c-.19-.57-.38-1.13-.578-1.742zM9 14H7v-2h2v2zm0-4H7V8h2v2z"/></svg>
+          Alipay
+        </button>
+      </div>
+
+      <!-- More payment methods -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1rem;">
+        <button class="express-btn express-btn-sm" onclick="selectPayment('wechat')">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="#07C160"><path d="M8.5 3C4.358 3 1 6.02 1 9.77c0 1.9.838 3.614 2.178 4.837L2.5 17l2.857-1.428A8.166 8.166 0 008.5 16c.174 0 .347-.005.519-.015C9.01 15.675 9 15.34 9 15c0-3.86 3.582-7 8-7 .174 0 .347.005.518.015C16.81 5.78 13.03 3 8.5 3z"/><path d="M17 10c-3.314 0-6 2.239-6 5s2.686 5 6 5c.96 0 1.865-.222 2.666-.617L22 21l-.666-2.221A4.873 4.873 0 0023 15c0-2.761-2.686-5-6-5z"/></svg>
+          WeChat Pay
+        </button>
+        <button class="express-btn express-btn-sm" onclick="selectPayment('paypal')">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="#003087"><path d="M7.016 19.198h-2.2c-.267 0-.495-.195-.536-.46L2.028 5.346a.32.32 0 01.316-.37h3.33c.267 0 .495.196.537.461l.368 2.354c.263-1.863 1.607-3.244 3.713-3.244 3.395 0 5.449 2.53 5.449 5.882 0 3.41-2.32 5.79-5.725 5.79zm0 0"/></svg>
+          PayPal
+        </button>
+        <button class="express-btn express-btn-sm" onclick="selectPayment('klarna')">
+          <span style="font-weight:700;font-size:0.85rem;color:#FFB3C7;letter-spacing:-0.5px;">klarna</span>
+        </button>
+        <button class="express-btn express-btn-sm" onclick="selectPayment('unionpay')">
+          <span style="font-weight:700;font-size:0.75rem;color:#C0392B;">银联 UnionPay</span>
+        </button>
+        <button class="express-btn express-btn-sm" onclick="selectPayment('paynow')">
+          <span style="font-weight:700;font-size:0.75rem;color:#E31C5F;">PayNow</span>
+        </button>
+        <button class="express-btn express-btn-sm" onclick="selectPayment('pbpl')">
+          <span style="font-weight:700;font-size:0.75rem;color:#185FA5;">PBPL</span>
+        </button>
+        <button class="express-btn express-btn-sm" onclick="selectPayment('card')">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+          Credit / Debit
+        </button>
+      </div>
+
+      <!-- Divider -->
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;">
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+        <span style="font-size:0.75rem;color:var(--muted2);" id="payment-method-label">or enter card details</span>
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+      </div>
+
+      <!-- Card fields (shown for card, hidden for others) -->
+      <div id="card-fields">
+        <button class="scan-btn" onclick="openScanner()">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9V6a3 3 0 013-3h3M3 15v3a3 3 0 003 3h3m6-18h3a3 3 0 013 3v3m-6 12h3a3 3 0 003-3v-3M9 12h6"/></svg>
+          Scan card with camera
+        </button>
+        <div class="form-group" style="margin-bottom:1rem;">
+          <label class="card-field-label">Name on card</label>
+          <input class="card-input" type="text" id="cardholder-name" placeholder="Jane Smith" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:2px;padding:0.8rem 1rem;font-family:var(--sans);font-size:0.95rem;">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="card-field-label">Card details</label>
+          <div id="stripe-card-element" style="background:#fff;border:1px solid var(--border);border-radius:2px;padding:0.85rem 1rem;"></div>
+          <div id="stripe-card-errors" style="color:#c0392b;font-size:0.8rem;margin-top:0.4rem;"></div>
+        </div>
+      </div>
+
+      <!-- Redirect message (shown for express methods) -->
+      <div id="redirect-msg" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:1rem;text-align:center;font-size:0.875rem;color:var(--muted);">
+        You'll be redirected to complete payment securely via <strong id="redirect-name"></strong>.
+      </div>
+
+      <button class="pay-btn" id="pay-btn" onclick="handlePayment()" style="margin-top:1rem;">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        <span id="pay-btn-text">Pay · Activate warranty</span>
+      </button>
+      <p class="modal-legal">Payments are processed securely. Servr never stores your payment details.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CARD SCANNER -->
+<div class="scanner-overlay" id="scanner-overlay">
+  <div class="scanner-frame">
+    <div class="scanner-corner tl"></div>
+    <div class="scanner-corner tr"></div>
+    <div class="scanner-corner bl"></div>
+    <div class="scanner-corner br"></div>
+    <div class="scanner-line"></div>
+  </div>
+  <p class="scanner-text">Hold your card inside the frame</p>
+  <button class="scanner-close" onclick="closeScanner()">Cancel</button>
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // Stripe setup
+  const STRIPE_PK = 'pk_test_51TFsGARc3ymskT36eZqSLmm6l4iEHXNnv5ave4eCSWgnQvV5eNdAJzAgqJeGTV3tGd4Z6Jc2AHYzf6y0oKWg0hKg00rXFT4zOA';
+  const stripe = Stripe(STRIPE_PK);
+  let cardElement = null;
+  let stripeElements = null;
+
+  async function mountCard(amount, description) {
+    // Create payment intent first
+    const res = await fetch('/api/create-payment-intent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount, currency: 'aud', description })
+    });
+    const { clientSecret, error } = await res.json();
+    if (error) throw new Error(error);
+
+    // Create elements with clientSecret
+    stripeElements = stripe.elements({ clientSecret,
+      appearance: {
+        theme: 'stripe',
+        variables: {
+          colorPrimary: '#185FA5',
+          colorBackground: '#ffffff',
+          colorText: '#0e0e0d',
+          colorDanger: '#c0392b',
+          fontFamily: 'DM Sans, sans-serif',
+          borderRadius: '2px',
+        }
+      }
+    });
+
+    // Clear previous element
+    document.getElementById('stripe-card-element').innerHTML = '';
+    cardElement = stripeElements.create('card', {
+      style: {
+        base: {
+          fontSize: '15px',
+          color: '#0e0e0d',
+          fontFamily: 'DM Sans, sans-serif',
+          '::placeholder': { color: '#999690' }
+        }
+      }
+    });
+    cardElement.mount('#stripe-card-element');
+    cardElement.on('change', (e) => {
+      document.getElementById('stripe-card-errors').textContent = e.error ? e.error.message : '';
+    });
+
+    return clientSecret;
+  }
+  // Fade-up observer
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight) {
+      el.classList.add('visible');
+    } else {
+      observer.observe(el);
+    }
+  });
+
+  // Land on register form when arriving via QR (?src=qr or #register)
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('src') === 'qr' || window.location.hash === '#register') {
+    window.addEventListener('DOMContentLoaded', function() {
+      setTimeout(function() {
+        const el = document.getElementById('register');
+        const navHeight = document.querySelector('nav').offsetHeight;
+        const top = el.getBoundingClientRect().top + window.scrollY - navHeight;
+        window.scrollTo({ top: top, behavior: 'instant' });
+      }, 50);
+    });
+  }
+
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  function selectPayment(method) {
+    document.querySelectorAll('.express-btn').forEach(b => b.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    const cardFields = document.getElementById('card-fields');
+    const redirectMsg = document.getElementById('redirect-msg');
+    const redirectName = document.getElementById('redirect-name');
+    const labels = {
+      apple: 'Apple Pay', google: 'Google Pay', alipay: 'Alipay',
+      wechat: 'WeChat Pay', paypal: 'PayPal', klarna: 'Klarna',
+      unionpay: 'UnionPay', paynow: 'PayNow', pbpl: 'PBPL'
+    };
+    if (method === 'card') {
+      cardFields.style.display = 'block';
+      redirectMsg.style.display = 'none';
+      document.getElementById('payment-method-label').textContent = 'or enter card details';
+    } else {
+      cardFields.style.display = 'none';
+      redirectMsg.style.display = 'block';
+      redirectName.textContent = labels[method] || method;
+      document.getElementById('payment-method-label').textContent = 'selected method';
+    }
+  }
+
+  function resetForm() {
+    const form = document.getElementById('register-form');
+    form.reset();
+    document.getElementById('form-body').style.display = 'block';
+    document.getElementById('form-success').style.display = 'none';
+    // Scroll back to top of form
+    document.getElementById('register').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  let _productValue = 0;
+  let _brand = '';
+  let _clientSecret = null;
+
+  function selectTerm(btn) {
+    document.querySelectorAll('.term-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const term = btn.dataset.term;
+    const rates = { '12': 0.15, '24': 0.25, '36': 0.35 };
+    const termLabels = { '12': '12-month', '24': '24-month', '36': '36-month' };
+    const price = Math.round(_productValue * rates[term] * 100) / 100;
+    document.getElementById('modal-plan-name').textContent = termLabels[term] + ' protection' + (_brand ? ' · ' + _brand : '');
+    document.getElementById('modal-plan-price').textContent = isNaN(price) ? '—' : '$' + price.toFixed(2);
+    document.getElementById('pay-btn-text').textContent = isNaN(price) ? 'Pay · Activate warranty' : 'Pay $' + price.toFixed(2) + ' · Activate warranty';
+  }
+
+  // Form submit — calculate price then show payment modal
+  async function handleRegister(e) {
+    e.preventDefault();
+    const form = document.getElementById('register-form');
+    const btn = form.querySelector('.form-submit');
+
+    const rawValue = form.querySelector('[name="product_value"]').value;
+    const term = form.querySelector('[name="warranty_type"]').value;
+    _brand = form.querySelector('[name="brand"]').value;
+    _productValue = parseFloat(rawValue.replace(/[^0-9.]/g, ''));
+
+    const rates = { '12': 0.15, '24': 0.25, '36': 0.35 };
+    const termLabels = { '12': '12-month', '24': '24-month', '36': '36-month' };
+    const rate = rates[term] || 0.25;
+    const warrantyPrice = Math.round(_productValue * rate * 100) / 100;
+
+    document.getElementById('modal-plan-name').textContent =
+      (termLabels[term] || term + '-month') + ' protection' + (_brand ? ' · ' + _brand : '');
+    document.getElementById('modal-plan-price').textContent =
+      isNaN(warrantyPrice) ? '—' : '$' + warrantyPrice.toFixed(2);
+    document.getElementById('modal-plan-value').textContent =
+      isNaN(_productValue) ? '' : 'product value $' + _productValue.toFixed(2);
+    document.getElementById('pay-btn-text').textContent =
+      isNaN(warrantyPrice) ? 'Pay · Activate warranty' : 'Pay $' + warrantyPrice.toFixed(2) + ' · Activate warranty';
+
+    // Highlight active term button
+    document.querySelectorAll('.term-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.term === term);
+    });
+
+    btn.textContent = 'Processing...';
+    btn.disabled = true;
+    try {
+      await fetch('https://formspree.io/f/xbdpyvlz', {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+    } catch(err) {}
+
+    // Open modal first
+    document.body.style.overflow = 'hidden';
+    document.getElementById('payment-modal').classList.add('open');
+    btn.textContent = 'Activate my warranty →';
+    btn.disabled = false;
+
+    // Mount Stripe card with payment intent
+    const amount = Math.round(warrantyPrice * 100);
+    const planName = document.getElementById('modal-plan-name').textContent;
+    try {
+      _clientSecret = await mountCard(amount, planName);
+    } catch(err) {
+      document.getElementById('stripe-card-errors').textContent = 'Could not load payment — please try again.';
+    }
+  }
+
+  function closePayment() {
+    document.getElementById('payment-modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function openScanner() {
+    document.getElementById('scanner-overlay').classList.add('open');
+    setTimeout(() => {
+      closeScanner();
+      document.getElementById('card-number').value = '4242 4242 4242 4242';
+    }, 3000);
+  }
+
+  function closeScanner() {
+    document.getElementById('scanner-overlay').classList.remove('open');
+  }
+
+  function formatCard(input) {
+    let val = input.value.replace(/\D/g, '').substring(0, 16);
+    input.value = val.replace(/(.{4})/g, '$1 ').trim();
+  }
+
+  function formatExpiry(input) {
+    let val = input.value.replace(/\D/g, '').substring(0, 4);
+    if (val.length >= 2) val = val.substring(0,2) + ' / ' + val.substring(2);
+    input.value = val;
+  }
+
+  async function handlePayment() {
+    const btn = document.getElementById('pay-btn');
+    btn.innerHTML = 'Processing...';
+    btn.disabled = true;
+
+    try {
+      if (!_clientSecret || !cardElement) throw new Error('Payment not ready');
+
+      const name = document.getElementById('cardholder-name').value;
+      const { error: stripeError } = await stripe.confirmCardPayment(_clientSecret, {
+        payment_method: { card: cardElement, billing_details: { name } }
+      });
+
+      if (stripeError) {
+        document.getElementById('stripe-card-errors').textContent = stripeError.message;
+        btn.innerHTML = '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg><span id="pay-btn-text">Try again</span>';
+        btn.disabled = false;
+        return;
+      }
+
+      document.getElementById('payment-modal').classList.remove('open');
+      document.body.style.overflow = '';
+      document.getElementById('form-body').style.display = 'none';
+      document.getElementById('form-success').style.display = 'block';
+
+    } catch(err) {
+      document.getElementById('stripe-card-errors').textContent = 'Payment failed — please try again.';
+      btn.innerHTML = '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg><span id="pay-btn-text">Try again</span>';
+      btn.disabled = false;
+    }
+  }
+
+  document.getElementById('payment-modal').addEventListener('click', function(e) {
+    if (e.target === this) closePayment();
+  });
+</script>
+</body>
+</html>
