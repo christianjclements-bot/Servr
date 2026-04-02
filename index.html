@@ -907,7 +907,7 @@
   <div class="hero-content">
     <div class="hero-badge">Servr Global Warranty</div>
     <h1>Your product.<br><em>Protected everywhere.</em></h1>
-    <p class="hero-sub">Activate your Servr warranty in 2 minutes. Local repair, fast claims, and real support — in every market your product was sold.</p>
+    <p class="hero-sub">Activate your Servr warranty in 2 minutes.<br>Local repair, fast claims, and real support — everywhere.</p>
     <div class="hero-cta">
       <a href="#register" class="btn-primary">Activate your warranty →</a>
       <a href="#how" class="btn-ghost">See how it works</a>
@@ -1255,43 +1255,29 @@
         </button>
       </div>
 
-      <!-- More payment methods -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1rem;">
         <button class="express-btn express-btn-sm" onclick="selectPayment('wechat')">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="#07C160"><path d="M8.5 3C4.358 3 1 6.02 1 9.77c0 1.9.838 3.614 2.178 4.837L2.5 17l2.857-1.428A8.166 8.166 0 008.5 16c.174 0 .347-.005.519-.015C9.01 15.675 9 15.34 9 15c0-3.86 3.582-7 8-7 .174 0 .347.005.518.015C16.81 5.78 13.03 3 8.5 3z"/><path d="M17 10c-3.314 0-6 2.239-6 5s2.686 5 6 5c.96 0 1.865-.222 2.666-.617L22 21l-.666-2.221A4.873 4.873 0 0023 15c0-2.761-2.686-5-6-5z"/></svg>
           WeChat Pay
         </button>
-        <button class="express-btn express-btn-sm" onclick="selectPayment('paypal')">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="#003087"><path d="M7.016 19.198h-2.2c-.267 0-.495-.195-.536-.46L2.028 5.346a.32.32 0 01.316-.37h3.33c.267 0 .495.196.537.461l.368 2.354c.263-1.863 1.607-3.244 3.713-3.244 3.395 0 5.449 2.53 5.449 5.882 0 3.41-2.32 5.79-5.725 5.79zm0 0"/></svg>
-          PayPal
-        </button>
         <button class="express-btn express-btn-sm" onclick="selectPayment('klarna')">
           <span style="font-weight:700;font-size:0.85rem;color:#FFB3C7;letter-spacing:-0.5px;">klarna</span>
         </button>
-        <button class="express-btn express-btn-sm" onclick="selectPayment('unionpay')">
-          <span style="font-weight:700;font-size:0.75rem;color:#C0392B;">银联 UnionPay</span>
-        </button>
-        <button class="express-btn express-btn-sm" onclick="selectPayment('paynow')">
-          <span style="font-weight:700;font-size:0.75rem;color:#E31C5F;">PayNow</span>
-        </button>
-        <button class="express-btn express-btn-sm" onclick="selectPayment('pbpl')">
-          <span style="font-weight:700;font-size:0.75rem;color:#185FA5;">PBPL</span>
-        </button>
-        <button class="express-btn express-btn-sm" onclick="selectPayment('card')">
+        <button class="express-btn express-btn-sm" onclick="selectPayment('card')" style="grid-column:1/-1;">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
-          Credit / Debit
+          Credit / Debit card
         </button>
       </div>
 
       <!-- Divider -->
-      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;">
+      <div id="payment-divider" style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;display:none;">
         <div style="flex:1;height:1px;background:var(--border);"></div>
         <span style="font-size:0.75rem;color:var(--muted2);" id="payment-method-label">or enter card details</span>
         <div style="flex:1;height:1px;background:var(--border);"></div>
       </div>
 
       <!-- Card fields (shown for card, hidden for others) -->
-      <div id="card-fields">
+      <div id="card-fields" style="display:none;">
         <button class="scan-btn" onclick="openScanner()">
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9V6a3 3 0 013-3h3M3 15v3a3 3 0 003 3h3m6-18h3a3 3 0 013 3v3m-6 12h3a3 3 0 003-3v-3M9 12h6"/></svg>
           Scan card with camera
@@ -1427,6 +1413,7 @@
     const cardFields = document.getElementById('card-fields');
     const redirectMsg = document.getElementById('redirect-msg');
     const redirectName = document.getElementById('redirect-name');
+    const divider = document.getElementById('payment-divider');
     const labels = {
       apple: 'Apple Pay', google: 'Google Pay', alipay: 'Alipay',
       wechat: 'WeChat Pay', paypal: 'PayPal', klarna: 'Klarna',
@@ -1434,10 +1421,12 @@
     };
     if (method === 'card') {
       cardFields.style.display = 'block';
+      divider.style.display = 'flex';
       redirectMsg.style.display = 'none';
       document.getElementById('payment-method-label').textContent = 'or enter card details';
     } else {
       cardFields.style.display = 'none';
+      divider.style.display = 'flex';
       redirectMsg.style.display = 'block';
       redirectName.textContent = labels[method] || method;
       document.getElementById('payment-method-label').textContent = 'selected method';
